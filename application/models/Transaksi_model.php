@@ -3,44 +3,53 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Transaksi_model extends CI_Model {
 
-    protected $table = 'transaksi';
-
     public function getAll()
     {
-        return $this->db->get($this->table)->result_array();
+        return $this->db->get('transaksi')->result_array();
     }
 
     public function getByUser($user_id)
     {
-        return $this->db->get_where($this->table, ['user_id' => $user_id])->result_array();
+        return $this->db->where('user_id', $user_id)->get('transaksi')->result_array();
     }
-
-
-    public function find($id)
-    {
-        return $this->db->get_where($this->table, ['id' => $id])->row_array();
-    }
-
-
-  
-    public function store($id)
-    {
-        return $this->db->get_where($this->table, ['jenis' => $jenis])->row_array();
-    }
-
 
     public function insert($data)
     {
-        return $this->db->insert($this->table, $data);
+        return $this->db->insert('transaksi', $data);
+    }
+
+    public function find($id)
+    {
+        return $this->db->where('id', $id)->get('transaksi')->row_array();
     }
 
     public function update($id, $data)
     {
-        return $this->db->where('id', $id)->update($this->table, $data);
+        return $this->db->where('id', $id)->update('transaksi', $data);
     }
 
     public function delete($id)
     {
-        return $this->db->delete($this->table, ['id' => $id]);
+        return $this->db->where('id', $id)->delete('transaksi');
+    }
+
+    // Update sum query to use select_sum()
+    public function getTotalPemasukan()
+    {
+        $this->db->select_sum('jumlah');
+        $this->db->where('jenis', 'pemasukan');
+        $query = $this->db->get('transaksi');
+        $result = $query->row_array();
+        return $result['jumlah'] ?? 0; // Return 0 if null
+    }
+
+    // Update sum query to use select_sum()
+    public function getTotalPengeluaran()
+    {
+        $this->db->select_sum('jumlah');
+        $this->db->where('jenis', 'pengeluaran');
+        $query = $this->db->get('transaksi');
+        $result = $query->row_array();
+        return $result['jumlah'] ?? 0; // Return 0 if null
     }
 }
